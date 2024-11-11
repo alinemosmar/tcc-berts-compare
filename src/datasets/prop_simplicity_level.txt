@@ -1,0 +1,25 @@
+Porcentagem de cada Simplicity Level no Conjunto de Treinamento:
+simplicity_level
+0    39.183988
+2    29.130100
+1    18.306390
+3    13.379523
+Name: proportion, dtype: float64
+
+
+Porcentagem de cada Simplicity Level no Conjunto de Validação:
+simplicity_level
+0    39.162562
+2    29.187192
+1    18.226601
+3    13.423645
+Name: proportion, dtype: float64
+
+
+Porcentagem de cada Simplicity Level no Conjunto de Teste:
+simplicity_level
+0    39.162562
+2    29.064039
+1    18.349754
+3    13.423645
+Name: proportion, dtype: float64
