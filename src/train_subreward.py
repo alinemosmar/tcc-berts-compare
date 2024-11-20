@@ -13,7 +13,7 @@ from sklearn.preprocessing import StandardScaler
 from transformers import BertTokenizer
 from sub_reward_model import SubRewardModel
 from subreward_training_pipeline import train_subreward, validate_subreward
-
+#treino e validação
 warnings.filterwarnings("ignore")
 best_val_metric = None
 

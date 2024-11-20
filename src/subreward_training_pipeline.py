@@ -7,7 +7,7 @@ from scipy.stats import pearsonr
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from pipe_utils import AverageMeter, ProgressMeter, get_lr
 from sklearn.preprocessing import StandardScaler
-
+#treinamento e validação ajustados para o bertimbau
 
 def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, args):
     batch_time = AverageMeter('Time', ':6.3f')
@@ -66,7 +66,7 @@ def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, a
         mse = mean_squared_error(actuals, preds)
         rmse = np.sqrt(mse)
         r2 = r2_score(actuals, preds)
-
+#métricas de MSE,RMSE, e r2 adicionadas
         print(f'MSE: {mse:.4f}')
         print(f'RMSE: {rmse:.4f}')
         print(f'R²: {r2:.4f}')

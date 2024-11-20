@@ -4,7 +4,7 @@ import argparse
 import torch.cuda
 
 from data.simplification import get_simplification_data
-
+#hiperametros, todos sendo usados a versão default
 
 def get_args():
     parser = argparse.ArgumentParser(description='Arguments for training and evaluating models')
