@@ -1,6 +1,5 @@
 from transformers import AutoConfig, AutoModel
 import torch.nn as nn
-#ajustado para o bertimbau
 
 class SubRewardModel(nn.Module):
 
@@ -13,7 +12,7 @@ class SubRewardModel(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.regressor = nn.Sequential(
             nn.Dropout(dropout),
-            nn.Linear(config.hidden_size, 1)
+            nn.Linear(config.hidden_size, 1)  # Utilize config.hidden_size
         )
         self.loss_fct = nn.MSELoss()
 
@@ -22,3 +21,8 @@ class SubRewardModel(nn.Module):
         pooled_output = outputs.pooler_output  # Utilize o pooler_output para representação [CLS]
         pooled_output = self.dropout(pooled_output)
         logits = self.regressor(pooled_output).clamp(-1, 1)
+        if labels is not None:
+            loss = self.loss_fct(logits.view(-1), labels.view(-1))
+            return loss, logits
+        else:
+            return logits
