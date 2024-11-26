@@ -1,14 +1,14 @@
-from transformers import AutoConfig, AutoModelForSequenceClassification
+from transformers import AutoConfig, AutoModelForSequenceClassification, BertModel, BertModelForSequenceClassification
 import torch.nn as nn
 
 class SubRewardModel(nn.Module):
 
     def __init__(self, dropout=0.2):
         super(SubRewardModel, self).__init__()
-        config = AutoConfig.from_pretrained('neuralmind/bert-base-portuguese-cased')
+        config = BertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
         config.hidden_dropout_prob = dropout
         config.attention_probs_dropout_prob = dropout
-        self.bert = AutoModelForSequenceClassification.from_pretrained('neuralmind/bert-base-portuguese-cased', config=config)
+        self.bert = BertModelForSequenceClassification.from_pretrained('neuralmind/bert-base-portuguese-cased', config=config)
         self.dropout = nn.Dropout(dropout)
         self.regressor = nn.Sequential(
             nn.Dropout(dropout),
