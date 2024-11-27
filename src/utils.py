@@ -10,7 +10,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Arguments for training and evaluating models')
 
     # Required parameters
-    parser.add_argument("--model_name", default='felipemaiapolo/legalnlp-bert', type=str,
+    parser.add_argument("--model_name", default='alfaneo/jurisbert-base-portuguese-sts', type=str,
                         help="Path to pretrained model or model identifier from huggingface.co/models")
     parser.add_argument("--data_folder", default='./datasets', type=str,
                         help="Path to data folder.")

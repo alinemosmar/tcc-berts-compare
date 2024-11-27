@@ -16,7 +16,7 @@ def main_worker(args):
     # Inicializar o modelo
     model = SubRewardModel()
 
-    tokenizer = AutoTokenizer.from_pretrained('felipemaiapolo/legalnlp-bert', do_lower_case=False)
+    tokenizer = AutoTokenizer.from_pretrained('alfaneo/jurisbert-base-portuguese-sts', do_lower_case=False)
 
 
     if not torch.cuda.is_available():
