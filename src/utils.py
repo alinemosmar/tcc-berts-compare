@@ -60,7 +60,7 @@ def get_args():
                         help='Number of data loading workers (default: 1)')
 
     parser.add_argument("--estimator", choices=['grammar', 'meaning', 'simplicity', 'bart', 'seq2seq'],
-                        default='grammar', type=str,
+                        default='simplicity', type=str,
                         help="The estimator to train and evaluate.")
 
     args = parser.parse_args()
