@@ -4,7 +4,7 @@ from pipe_utils import AverageMeter, ProgressMeter
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
-
+#pipeline de teste ajustado para o bertimbau
 
 def run_model_test(dataloader, model, args):
     batch_time = AverageMeter('Time', ':6.3f')

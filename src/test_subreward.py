@@ -10,7 +10,7 @@ from pipe_utils import AverageMeter, ProgressMeter, get_lr
 import torch
 import numpy as np
 import torch.backends.cudnn as cudnn
-
+#teste
 
 def main_worker(args):
     # Inicializar o modelo
