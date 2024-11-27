@@ -5,10 +5,13 @@ class SubRewardModel(nn.Module):
 
     def __init__(self, dropout=0.2):
         super(SubRewardModel, self).__init__()
-        config = AutoConfig.from_pretrained('juridics/bertlaw-base-portuguese-sts-scale')
+        # Configuração do modelo BERTimbau
+        config = AutoConfig.from_pretrained('felipemaiapolo/legalnlp-bert')
         config.hidden_dropout_prob = dropout
         config.attention_probs_dropout_prob = dropout
-        self.bert = AutoModel.from_pretrained('juridics/bertlaw-base-portuguese-sts-scale', config=config)
+
+        # Carregar o modelo base BERTimbau
+        self.bert = AutoModel.from_pretrained('felipemaiapolo/legalnlp-bert', config=config)
         self.dropout = nn.Dropout(dropout)
         self.regressor = nn.Sequential(
             nn.Dropout(dropout),

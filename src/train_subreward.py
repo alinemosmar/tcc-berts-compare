@@ -26,7 +26,7 @@ def main_worker(gpu, args):
 
     model = SubRewardModel()
 
-    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased', do_lower_case=False)
+    tokenizer = BertTokenizer.from_pretrained('felipemaiapolo/legalnlp-bert', do_lower_case=False)
 
     if not torch.cuda.is_available():
         print('Using CPU, this will be slow')

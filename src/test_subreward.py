@@ -3,7 +3,7 @@ import os
 
 from utils import get_args, get_dataloaders
 from sub_reward_model import SubRewardModel
-from transformers import BertTokenizer
+from transformers import BertTokenizer, AutoTokenizer
 from subreward_testing_pipeline import run_model_test as test_bertg
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from pipe_utils import AverageMeter, ProgressMeter, get_lr
@@ -16,7 +16,7 @@ def main_worker(args):
     # Inicializar o modelo
     model = SubRewardModel()
 
-    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased', do_lower_case=False)
+    tokenizer = AutoTokenizer.from_pretrained('felipemaiapolo/legalnlp-bert', do_lower_case=False)
 
 
     if not torch.cuda.is_available():
