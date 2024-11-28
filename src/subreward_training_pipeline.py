@@ -40,7 +40,7 @@ def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, a
 
         outputs = model(**inputs)
 
-        predicted_labels = outputs.logits.view(-1)
+        predicted_labels =  outputs[0].view(-1)  
         true_labels = batch[2].view(-1)
 
         # Armazenar métricas para comparação
