@@ -10,7 +10,7 @@ from torch.optim import AdamW
 from torch.nn import MSELoss
 from sklearn.preprocessing import StandardScaler
 
-from transformers import BertTokenizer
+from transformers import AutoTokenizer
 from sub_reward_model import SubRewardModel
 from subreward_training_pipeline import train_subreward, validate_subreward
 
@@ -26,7 +26,7 @@ def main_worker(gpu, args):
 
     model = SubRewardModel()
 
-    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased', do_lower_case=False)
+    tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
 
     if not torch.cuda.is_available():
         print('Using CPU, this will be slow')

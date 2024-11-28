@@ -8,9 +8,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 def get_simplification_data(batch_size, data_folder, max_seq_length, num_workers, tokenizer):
-    # Carregar os dados do seu próprio dataset
-
-
+    # Carregar os dados do dataset
     train_df = get_simplification_dataframe(data_folder, "train.csv")
     valid_df = get_simplification_dataframe(data_folder, "val.csv")
     test_df = get_simplification_dataframe(data_folder, "test.csv")
@@ -26,8 +24,6 @@ def get_simplification_data(batch_size, data_folder, max_seq_length, num_workers
     return train_loader, valid_loader, test_loader
 
 
-
-
 def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokenizer):
     # Remover linhas com valores ausentes
     dataframe = dataframe.dropna(subset=['sentence_text_from', 'sentence_text_to', 'simplicity_level'])
@@ -39,7 +35,6 @@ def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokeniz
     inputs = tokenizer.batch_encode_plus(
         [(row['sentence_text_from'], row['sentence_text_to']) for _, row in dataframe.iterrows()],
         add_special_tokens=True,
-        return_token_type_ids=True,  
         return_attention_mask=True,
         max_length=max_seq_length,
         padding='max_length',
@@ -47,7 +42,7 @@ def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokeniz
         return_tensors='pt'
     )
 
-    sent_ids = [sid for sid, _ in dataframe.iterrows()]  
+    sent_ids = [sid for sid, _ in dataframe.iterrows()]
 
     # Escalonamento dos labels de simplicidade
     scaler = StandardScaler()
@@ -56,16 +51,13 @@ def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokeniz
     ids = torch.tensor([sid for sid in sent_ids], dtype=torch.long)
     y = torch.tensor([label[0] for label in train_labels.tolist()], dtype=torch.float32)
 
-    # Inclusão dos token_type_ids
-    dataset = TensorDataset(inputs['input_ids'], inputs['attention_mask'], inputs['token_type_ids'], y, ids)
+    # Criação do dataset sem `token_type_ids`
+    dataset = TensorDataset(inputs['input_ids'], inputs['attention_mask'], y, ids)
 
     return dataset
+
 
 def get_simplification_dataframe(data_folder, filename):
     filepath = os.path.join(data_folder, filename)
     df = pd.read_csv(filepath)
-
-
-
     return df
-

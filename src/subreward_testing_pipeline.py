@@ -22,27 +22,23 @@ def run_model_test(dataloader, model, args):
             bsz = batch[0].size(0)
             batch = tuple(t.cuda() for t in batch) if torch.cuda.is_available() else batch
 
-            # Atualização para incluir token_type_ids e labels
+            # Ajustado para entradas do RoBERTa
             inputs = {
                 'input_ids': batch[0],
-                'attention_mask': batch[1],
-                'token_type_ids': batch[2],  # Inclusão de token_type_ids
-                'labels': batch[3]           # Inclusão de labels
+                'attention_mask': batch[1]
             }
 
-            output = model(**inputs)
-          
-            # Supondo que output seja uma tupla (loss, logits)
-            logits = output[1].view(-1)
+            # Obter logits diretamente
+            outputs = model(**inputs)
+            logits = outputs.logits.view(-1)  # Ajustado para saída de logits
             predictions = logits
-            true_labels = batch[3].view(-1)  # Atualizado para batch[3]
+            true_labels = batch[2].view(-1)  # Alterado para batch[2], correspondendo aos labels
 
             # Armazenar métricas para comparação
             preds.extend(predictions.cpu().detach().numpy().tolist())
             actuals.extend(true_labels.cpu().detach().numpy().tolist())
 
             corr, _ = pearsonr(preds, actuals)
-
             top.update(corr, bsz)
             batch_time.update(time.time() - end)
             end = time.time()
