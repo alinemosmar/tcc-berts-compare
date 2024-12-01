@@ -2,13 +2,13 @@ import os
 import pandas as pd
 import torch
 import torch.nn.utils.rnn
-import transformers
 from torch.utils.data import TensorDataset, DataLoader
+from transformers import AutoTokenizer
 from sklearn.preprocessing import StandardScaler
 
-
+# Tokenização
 def get_simplification_data(batch_size, data_folder, max_seq_length, num_workers, tokenizer):
-    # Carregar os dados do dataset
+    # Carregar os dados do seu próprio dataset
     train_df = get_simplification_dataframe(data_folder, "train.csv")
     valid_df = get_simplification_dataframe(data_folder, "val.csv")
     test_df = get_simplification_dataframe(data_folder, "test.csv")
@@ -22,7 +22,6 @@ def get_simplification_data(batch_size, data_folder, max_seq_length, num_workers
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
 
     return train_loader, valid_loader, test_loader
-
 
 def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokenizer):
     # Remover linhas com valores ausentes
@@ -42,7 +41,7 @@ def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokeniz
         return_tensors='pt'
     )
 
-    sent_ids = [sid for sid, _ in dataframe.iterrows()]
+    sent_ids = [sid for sid, _ in dataframe.iterrows()]  
 
     # Escalonamento dos labels de simplicidade
     scaler = StandardScaler()
@@ -51,11 +50,10 @@ def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokeniz
     ids = torch.tensor([sid for sid in sent_ids], dtype=torch.long)
     y = torch.tensor([label[0] for label in train_labels.tolist()], dtype=torch.float32)
 
-    # Criação do dataset sem `token_type_ids`
+    # Criação do dataset sem token_type_ids
     dataset = TensorDataset(inputs['input_ids'], inputs['attention_mask'], y, ids)
 
     return dataset
-
 
 def get_simplification_dataframe(data_folder, filename):
     filepath = os.path.join(data_folder, filename)

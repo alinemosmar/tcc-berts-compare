@@ -10,10 +10,10 @@ from torch.optim import AdamW
 from torch.nn import MSELoss
 from sklearn.preprocessing import StandardScaler
 
-from transformers import AutoTokenizer
-from sub_reward_model import SubRewardModel
+from sub_reward_model import SubRewardModel  # Certifique-se de que SubRewardModel suporta RoBERTa
 from subreward_training_pipeline import train_subreward, validate_subreward
 
+# Treino e validação
 warnings.filterwarnings("ignore")
 best_val_metric = None
 
@@ -26,7 +26,8 @@ def main_worker(gpu, args):
 
     model = SubRewardModel()
 
-    tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+    # Atualizando tokenizer para RoBERTa-base
+    tokenizer = AutoTokenizer.from_pretrained('roberta-base')
 
     if not torch.cuda.is_available():
         print('Using CPU, this will be slow')
@@ -40,6 +41,7 @@ def main_worker(gpu, args):
 
     scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=args.warmup_steps, num_training_steps=-1)
 
+    # Ajustando dataloaders para o tokenizer da RoBERTa
     dataloader = get_dataloaders(args.data_folder, tokenizer, args.batch_size, args.workers,
                                  args.max_seq_length)
 

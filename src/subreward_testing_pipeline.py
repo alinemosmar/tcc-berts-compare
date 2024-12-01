@@ -5,7 +5,6 @@ from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 
-
 def run_model_test(dataloader, model, args):
     batch_time = AverageMeter('Time', ':6.3f')
     top = AverageMeter('Pearson', ':1.3f')
@@ -22,23 +21,26 @@ def run_model_test(dataloader, model, args):
             bsz = batch[0].size(0)
             batch = tuple(t.cuda() for t in batch) if torch.cuda.is_available() else batch
 
-            # Ajustado para entradas do RoBERTa
+            # Ajustado para RoBERTa: sem token_type_ids
             inputs = {
                 'input_ids': batch[0],
-                'attention_mask': batch[1]
+                'attention_mask': batch[1],
+                'labels': batch[2]  # Ajustado de batch[3] para batch[2]
             }
 
-            # Obter logits diretamente
-            outputs = model(**inputs)
-            logits = outputs.logits.view(-1)  # Ajustado para saída de logits
+            output = model(**inputs)
+          
+            # Supondo que output seja uma tupla (loss, logits)
+            logits = output[1].view(-1)
             predictions = logits
-            true_labels = batch[2].view(-1)  # Alterado para batch[2], correspondendo aos labels
+            true_labels = batch[2].view(-1)  # Ajustado de batch[3] para batch[2]
 
             # Armazenar métricas para comparação
             preds.extend(predictions.cpu().detach().numpy().tolist())
             actuals.extend(true_labels.cpu().detach().numpy().tolist())
 
             corr, _ = pearsonr(preds, actuals)
+
             top.update(corr, bsz)
             batch_time.update(time.time() - end)
             end = time.time()
