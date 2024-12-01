@@ -16,7 +16,7 @@ def main_worker(args):
     # Inicializar o modelo
     model = SubRewardModel()
 
-    # Inicializar o tokenizer do bertimbau-law
+    # Inicializar o tokenizer do Bertimbau-Law
     tokenizer = AutoTokenizer.from_pretrained('juridics/bertimbaulaw-base-portuguese-sts-scale')
 
     if not torch.cuda.is_available():
@@ -36,8 +36,7 @@ def main_worker(args):
     cudnn.benchmark = True
 
     # Obter dataloaders
-    dataloader = get_dataloaders(args.data_folder, tokenizer, args.batch_size, args.workers,
-                                 args.max_seq_length)
+    dataloader = get_dataloaders(args.data_folder, tokenizer, args.batch_size, args.workers, args.max_seq_length)
 
     testing_loader = dataloader['loader']['testing']
     corr, preds, actuals = test_bertg(testing_loader, model, args)
