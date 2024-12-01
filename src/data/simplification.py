@@ -5,12 +5,11 @@ import torch.nn.utils.rnn
 import transformers
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.preprocessing import StandardScaler
-#tokenização
+from transformers import AutoTokenizer  # Atualizado para compatibilidade com bertimbaulaw
 
+# Tokenização e carregamento de dados
 def get_simplification_data(batch_size, data_folder, max_seq_length, num_workers, tokenizer):
     # Carregar os dados do seu próprio dataset
-
-
     train_df = get_simplification_dataframe(data_folder, "train.csv")
     valid_df = get_simplification_dataframe(data_folder, "val.csv")
     test_df = get_simplification_dataframe(data_folder, "test.csv")
@@ -25,9 +24,6 @@ def get_simplification_data(batch_size, data_folder, max_seq_length, num_workers
 
     return train_loader, valid_loader, test_loader
 
-
-
-
 def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokenizer):
     # Remover linhas com valores ausentes
     dataframe = dataframe.dropna(subset=['sentence_text_from', 'sentence_text_to', 'simplicity_level'])
@@ -39,7 +35,7 @@ def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokeniz
     inputs = tokenizer.batch_encode_plus(
         [(row['sentence_text_from'], row['sentence_text_to']) for _, row in dataframe.iterrows()],
         add_special_tokens=True,
-        return_token_type_ids=True,  
+        return_token_type_ids=True,  # Necessário para o bertimbaulaw
         return_attention_mask=True,
         max_length=max_seq_length,
         padding='max_length',
@@ -64,8 +60,6 @@ def get_simplification_dataset_from_dataframe(dataframe, max_seq_length, tokeniz
 def get_simplification_dataframe(data_folder, filename):
     filepath = os.path.join(data_folder, filename)
     df = pd.read_csv(filepath)
-
-
 
     return df
 

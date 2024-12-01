@@ -1,16 +1,17 @@
-from transformers import AutoConfig, AutoModel
+from transformers import AutoConfig, AutoModel, AutoTokenizer
 import torch.nn as nn
+import torch
 
 class SubRewardModel(nn.Module):
     def __init__(self, dropout=0.2):
         super(SubRewardModel, self).__init__()
-        # Configuração do modelo BERTimbau
-        config = AutoConfig.from_pretrained('neuralmind/bert-base-portuguese-cased')
+        # Configuração do modelo Bertimbau-Law
+        config = AutoConfig.from_pretrained('juridics/bertimbaulaw-base-portuguese-sts-scale')
         config.hidden_dropout_prob = dropout
         config.attention_probs_dropout_prob = dropout
 
-        # Carregar o modelo base BERTimbau
-        self.bert = AutoModel.from_pretrained('neuralmind/bert-base-portuguese-cased', config=config)
+        # Carregar o modelo base Bertimbau-Law
+        self.bert = AutoModel.from_pretrained('juridics/bertimbaulaw-base-portuguese-sts-scale', config=config)
         self.dropout = nn.Dropout(dropout)
 
         # Camada de regressão linear
@@ -22,11 +23,18 @@ class SubRewardModel(nn.Module):
         self.loss_fct = nn.MSELoss()
 
     def forward(self, input_ids, attention_mask, token_type_ids=None, labels=None):
-        # Passar os dados pelo modelo BERT
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
+        # Passar os dados pelo modelo Bertimbau-Law
+        outputs = self.bert(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids  # Incluído token_type_ids
+        )
 
-        # Obter a representação do token [CLS]
-        pooled_output = outputs.last_hidden_state[:, 0, :]  # Pegando o token [CLS]
+        # Obter a representação média (Mean Pooling)
+        token_embeddings = outputs.last_hidden_state  # Todas as embeddings dos tokens
+        input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+        pooled_output = torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+
         pooled_output = self.dropout(pooled_output)
 
         # Regressor linear para prever a simplicidade

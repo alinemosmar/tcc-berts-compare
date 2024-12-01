@@ -4,7 +4,6 @@ from pipe_utils import AverageMeter, ProgressMeter
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
-#pipeline de teste ajustado para o bertimbau
 
 def run_model_test(dataloader, model, args):
     batch_time = AverageMeter('Time', ':6.3f')
@@ -22,18 +21,18 @@ def run_model_test(dataloader, model, args):
             bsz = batch[0].size(0)
             batch = tuple(t.cuda() for t in batch) if torch.cuda.is_available() else batch
 
-            # Atualização para incluir token_type_ids e labels
+            # Compatibilidade com bertimbaulaw
             inputs = {
                 'input_ids': batch[0],
                 'attention_mask': batch[1],
-                'token_type_ids': batch[2],  # Inclusão de token_type_ids
-                'labels': batch[3]           # Inclusão de labels
+                'token_type_ids': batch[2],  # Necessário para BERT
+                'labels': batch[3]  # Atualizado para batch[3]
             }
 
-            output = model(**inputs)
-          
-            # Supondo que output seja uma tupla (loss, logits)
-            logits = output[1].view(-1)
+            outputs = model(**inputs)
+            
+            # A saída do modelo é logits
+            logits = outputs.logits.view(-1)  # Atualizado para lidar com saída do bertimbaulaw
             predictions = logits
             true_labels = batch[3].view(-1)  # Atualizado para batch[3]
 
@@ -42,7 +41,6 @@ def run_model_test(dataloader, model, args):
             actuals.extend(true_labels.cpu().detach().numpy().tolist())
 
             corr, _ = pearsonr(preds, actuals)
-
             top.update(corr, bsz)
             batch_time.update(time.time() - end)
             end = time.time()
