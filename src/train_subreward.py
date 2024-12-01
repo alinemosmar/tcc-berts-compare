@@ -26,8 +26,8 @@ def main_worker(gpu, args):
 
     model = SubRewardModel()
 
-    # Atualizando tokenizer para RoBERTa-base
-    tokenizer = AutoTokenizer.from_pretrained('roberta-base')
+    # Atualizando tokenizer para eduagarcia/RoBERTaLexPT-base
+    tokenizer = AutoTokenizer.from_pretrained('eduagarcia/RoBERTaLexPT-base')
 
     if not torch.cuda.is_available():
         print('Using CPU, this will be slow')

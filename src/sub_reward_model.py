@@ -5,12 +5,12 @@ class SubRewardModel(nn.Module):
     def __init__(self, dropout=0.2):
         super(SubRewardModel, self).__init__()
         # Configuração do modelo RoBERTa
-        config = AutoConfig.from_pretrained('roberta-base')
+        config = AutoConfig.from_pretrained('eduagarcia/RoBERTaLexPT-base')
         config.hidden_dropout_prob = dropout
         config.attention_probs_dropout_prob = dropout
 
         # Carregar o modelo base RoBERTa
-        self.roberta = AutoModel.from_pretrained('roberta-base', config=config)
+        self.roberta = AutoModel.from_pretrained('eduagarcia/RoBERTaLexPT-base', config=config)
         self.dropout = nn.Dropout(dropout)
 
         # Camada de regressão linear
