@@ -29,6 +29,7 @@ def main_worker(gpu, args):
         print("Use GPU: {} for training".format(args.gpu))
 
     model = SubRewardModel()
+    scaler = StandardScaler()
 
     tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased', do_lower_case=False)
 
@@ -57,11 +58,14 @@ def main_worker(gpu, args):
 
         time2 = time.time()
         print('Training epoch {}, total time {:.2f}, loss {:.7f}'.format(epoch, (time2 - time1), train_loss))
+        no_scaled_preds = scaler.inverse_transform(val_preds).flatten()
+        no_scaled_actuals = scaler.inverse_transform(val_actuals).flatten()
+
         df = pd.DataFrame({
             'sentence_from': sentence_from,
             'sentence_to': sentence_to,
-            'predicted_simplicity': preds,
-            'actual_simplicity': actuals
+            'predicted_simplicity': no_scaled_preds,
+            'actual_simplicity': no_scaled_actuals
         })
         df.to_csv(os.path.join(current_dir, f'val_predictions_epoch_{epoch}.csv'), index=False)
         val_time1 = time.time()
