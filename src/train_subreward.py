@@ -44,11 +44,8 @@ def main_worker(gpu, args):
 
     # Ajustar o scaler no conjunto de treinamento
     scaler = StandardScaler()
-    all_actuals = []
-    for batch in training_loader:
-        actuals = batch[3].numpy()  # Extraindo valores reais
-        all_actuals.extend(actuals)
-    scaler.fit(np.array(all_actuals).reshape(-1, 1))
+    train_df = pd.read_csv(os.path.join(args.data_folder, "train.csv"))
+    scaler.fit(train_df['simplicity_level'].to_numpy().reshape(-1, 1))
 
     for epoch in range(args.start_epoch, args.epochs):
         time1 = time.time()
