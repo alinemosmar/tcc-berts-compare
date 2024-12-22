@@ -57,8 +57,8 @@ def main_worker(gpu, args):
         df = pd.DataFrame({
             'sentence_from': sentence_from,
             'sentence_to': sentence_to,
-            'predicted_simplicity': val_preds,
-            'actual_simplicity': val_actuals
+            'predicted_simplicity': preds,
+            'actual_simplicity': actuals
         })
         df.to_csv(f'{args.save_folder}/predictions_epoch_{epoch}.csv', index=False)
         val_time1 = time.time()
