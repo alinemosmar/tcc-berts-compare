@@ -10,6 +10,7 @@ from torch.optim import AdamW
 from torch.nn import MSELoss
 from sklearn.preprocessing import StandardScaler
 
+import pandas as pd
 from transformers import BertTokenizer
 from sub_reward_model import SubRewardModel
 from subreward_training_pipeline import train_subreward, validate_subreward
@@ -48,16 +49,25 @@ def main_worker(gpu, args):
 
     for epoch in range(args.start_epoch, args.epochs):
         time1 = time.time()
-        train_loss, train_metric, preds, actuals = train_subreward(training_loader, model, optimizer, criterion, scheduler,
-                                                                   epoch, args)
+        train_loss, train_metric, preds, actuals, sentence_from, sentence_to = train_subreward(training_loader, model, optimizer, criterion, scheduler,
+                                                                   epoch, args, tokenizer)
 
         time2 = time.time()
         print('Training epoch {}, total time {:.2f}, loss {:.7f}'.format(epoch, (time2 - time1), train_loss))
-
+        df = pd.DataFrame({
+            'sentence_from': sentence_from,
+            'sentence_to': sentence_to,
+            'predicted_simplicity': val_preds,
+            'actual_simplicity': val_actuals
+        })
+        df.to_csv(f'{args.save_folder}/predictions_epoch_{epoch}.csv', index=False)
         val_time1 = time.time()
         val_loss, val_metric, val_preds, val_actuals = validate_subreward(validation_loader, model, criterion, epoch, args)
         val_time2 = time.time()
+        
         print('Validation epoch {}, total time {:.2f}, loss {:.7f}'.format(epoch, (val_time2 - val_time1), val_loss))
+          # Salvar previsões em um arquivo CSV
+        
 
         if best_val_metric is None or val_metric > best_val_metric:
             print('Updating checkpoint. New best found.')

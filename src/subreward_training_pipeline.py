@@ -9,7 +9,7 @@ from pipe_utils import AverageMeter, ProgressMeter, get_lr
 from sklearn.preprocessing import StandardScaler
 #treinamento e validação ajustados para o bertimbau
 
-def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, args):
+def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, args, tokenizer):
     batch_time = AverageMeter('Time', ':6.3f')
     data_time = AverageMeter('Data', ':6.3f')
     losses = AverageMeter('Loss', ':1.5f')
@@ -23,6 +23,7 @@ def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, a
         logfile=os.path.join(args.save_folder, 'log_training_' + args.model_name + '.csv'))
 
     preds, actuals = [], []
+    sentence_from, sentence_to = [], []
     l1_criterion = torch.nn.L1Loss()
     model.train()
     end = time.time()
@@ -35,7 +36,7 @@ def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, a
                   'attention_mask': batch[1],
                   'token_type_ids': batch[2],  # Adicionado
                   'labels': batch[3]}  # Alterado de batch[2] para batch[3]
-
+    
         output = model(**inputs)
 
         predicted_labels = output[1].view(-1)
@@ -45,7 +46,11 @@ def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, a
         preds.extend(predicted_labels.cpu().detach().numpy())
         actuals.extend(true_labels.cpu().detach().numpy())
         # Imprimir predições em inteiros
-
+        decoded_sentences = tokenizer.batch_decode(batch[0], skip_special_tokens=True)
+        for sentence in decoded_sentences:
+            from_to = sentence.split('[SEP]')
+            sentence_from.append(from_to[0].strip())
+            sentence_to.append(from_to[1].strip() if len(from_to) > 1 else '')        
         scaler = StandardScaler()
         loss = criterion(predicted_labels, true_labels)
 
@@ -87,7 +92,7 @@ def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, a
         if (idx + 1) % args.print_freq == 0:
             progress.display(idx)
 
-    return losses.avg, top.avg, preds, actuals
+    return losses.avg, top.avg, preds, actuals, sentence_from, sentence_to
 
 def validate_subreward(dataloader, model, criterion, epoch, args):
     batch_time = AverageMeter('Time', ':6.3f')
