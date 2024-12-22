@@ -62,8 +62,8 @@ def main_worker(gpu, args):
         no_scaled_actuals  = np.array(actuals).reshape(-1, 1)
         no_scaled_preds = np.array(preds).reshape(-1, 1)
         scaler.fit(no_scaled_actuals)
-        no_scaled_preds = scaler.inverse_transform(preds).flatten()
-        no_scaled_actuals = scaler.inverse_transform(actuals).flatten()
+        no_scaled_preds = scaler.inverse_transform(no_scaled_preds).flatten()
+        no_scaled_actuals = scaler.inverse_transform(no_scaled_actuals).flatten()
 
         df = pd.DataFrame({
             'sentence_from': sentence_from,
