@@ -63,7 +63,7 @@ def main_worker(gpu, args):
             'predicted_simplicity': preds,
             'actual_simplicity': actuals
         })
-        df.to_csv(current_dir,f'predictions_epoch_{epoch}.csv', index=False)
+        df.to_csv(os.path.join(current_dir, f'val_predictions_epoch_{epoch}.csv'), index=False)
         val_time1 = time.time()
         val_loss, val_metric, val_preds, val_actuals = validate_subreward(validation_loader, model, criterion, epoch, args)
         val_time2 = time.time()
