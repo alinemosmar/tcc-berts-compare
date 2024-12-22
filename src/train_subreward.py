@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import torch
+import os
 import time
 import warnings
 import torch.backends.cudnn as cudnn
@@ -21,6 +22,8 @@ best_val_metric = None
 def main_worker(gpu, args):
     global best_val_metric
     args.gpu = gpu
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
 
     if args.gpu is not None:
         print("Use GPU: {} for training".format(args.gpu))
@@ -77,7 +80,7 @@ def main_worker(gpu, args):
                 'state_dict': model.state_dict(),
                 'best_val_metric': best_val_metric,
                 'optimizer': optimizer.state_dict(),
-            }, args.save_folder, 'checkpoint_{}.pth.tar'.format(args.estimator))
+            }, current_dir, 'checkpoint_{}.pth.tar'.format(args.estimator))
 
 
 if __name__ == '__main__':
