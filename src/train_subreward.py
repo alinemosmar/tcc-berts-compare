@@ -58,6 +58,10 @@ def main_worker(gpu, args):
 
         time2 = time.time()
         print('Training epoch {}, total time {:.2f}, loss {:.7f}'.format(epoch, (time2 - time1), train_loss))
+
+        no_scaled_actuals  = np.array(actuals).reshape(-1, 1)
+        no_scaled_preds = np.array(preds).reshape(-1, 1)
+        scaler.fit(no_scaled_actuals)
         no_scaled_preds = scaler.inverse_transform(preds).flatten()
         no_scaled_actuals = scaler.inverse_transform(actuals).flatten()
 
