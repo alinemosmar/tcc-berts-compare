@@ -51,7 +51,6 @@ def train_subreward(dataloader, model, optimizer, criterion, scheduler, epoch, a
             from_to = sentence.split('[SEP]')
             sentence_from.append(from_to[0].strip())
             sentence_to.append(from_to[1].strip() if len(from_to) > 1 else '')        
-        scaler = StandardScaler()
         loss = criterion(predicted_labels, true_labels)
 
         # L1 regularization

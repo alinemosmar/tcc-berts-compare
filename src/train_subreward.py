@@ -1,10 +1,10 @@
 import os
 import numpy as np
-import pandas as pd
+
 import torch
 import time
 import warnings
-from sklearn.preprocessing import StandardScaler
+
 from utils import get_args, get_dataloaders, save_checkpoint
 from transformers import BertTokenizer, get_linear_schedule_with_warmup
 from torch.optim import AdamW
@@ -18,8 +18,6 @@ best_val_metric = None
 def main_worker(gpu, args):
     global best_val_metric
     args.gpu = gpu
-
-    current_dir = os.path.dirname(os.path.abspath(__file__))
 
     if args.gpu is not None:
         print("Use GPU: {} for training".format(args.gpu))
@@ -43,30 +41,16 @@ def main_worker(gpu, args):
     validation_loader = dataloader['loader']['validation']
 
     # Ajustar o scaler no conjunto de treinamento
-    scaler = StandardScaler()
-    train_df = pd.read_csv(os.path.join(args.data_folder, "train.csv"))
-    scaler.fit(train_df['simplicity_level'].to_numpy().reshape(-1, 1))
+
 
     for epoch in range(args.start_epoch, args.epochs):
         time1 = time.time()
         train_loss, train_metric, preds, actuals, sentence_from, sentence_to = train_subreward(
             training_loader, model, optimizer, criterion, scheduler, epoch, args, tokenizer
         )
-        time2 = time.time()
-        print(f'Training epoch {epoch}, total time {time2 - time1:.2f}, loss {train_loss:.7f}')
-
-        # Inversão de escala para previsões e valores reais
-        no_scaled_actuals = scaler.inverse_transform(np.array(actuals).reshape(-1, 1)).flatten()
-        no_scaled_preds = scaler.inverse_transform(np.array(preds).reshape(-1, 1)).flatten()
-
+        
         # Salvar previsões e valores reais no CSV
-        df = pd.DataFrame({
-            'sentence_from': sentence_from,
-            'sentence_to': sentence_to,
-            'predicted_simplicity': no_scaled_preds,
-            'actual_simplicity': no_scaled_actuals
-        })
-        df.to_csv(os.path.join(current_dir, f'val_predictions_epoch_{epoch}.csv'), index=False)
+
 
         val_time1 = time.time()
         val_loss, val_metric, val_preds, val_actuals = validate_subreward(
