@@ -5,7 +5,7 @@ import torch.nn.utils.rnn
 import transformers
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.preprocessing import StandardScaler
-
+#tokenização
 
 def get_simplification_data(batch_size, data_folder, max_seq_length, num_workers, tokenizer):
     # Carregar os dados do seu próprio dataset

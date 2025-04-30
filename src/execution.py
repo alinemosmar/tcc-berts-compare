@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+#divisão dos dados, somente executados 1x
 
 urls = [
     "https://raw.githubusercontent.com/sidleal/porsimplessent/master/pss/pss2_align_length_ori_nat.tsv",

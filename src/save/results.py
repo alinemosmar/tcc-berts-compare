@@ -4,7 +4,8 @@ import os
 current_dir = os.path.dirname(__file__)
 bertikal_file_path = os.path.join(current_dir,"simplicity_models", "bertikal-validation.csv")
 bertimbau_file_path = os.path.join(current_dir,"simplicity_models", "bertimbau-validation.csv")
-# Ler o arquivo
+#plot de métricas
+
 df = pd.read_csv(bertimbau_file_path, sep=';', header=0)
 
 # Converter colunas para o tipo numérico
